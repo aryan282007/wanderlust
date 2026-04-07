@@ -5,6 +5,8 @@ const port = 8080;
 const path = require("path");
 const methodOverride = require('method-override');
 const ejsMate = require("ejs-mate");
+const asyncWrap = require("./utils/asyncWrap.js");
+const ExpressError = require("./utils/ExpressError.js");
 
 const Listing = require("./modals/listing.js");
 // const { link } = require("fs");
@@ -15,6 +17,10 @@ app.use(express.urlencoded({extended : true}));
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
+app.use((err,req,res,next)=>{
+  let {massage ,statusCode} = err;
+  res.status(statusCode).send(massage);
+})
 
 const mongoose_url = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -39,12 +45,12 @@ app.get("/listing/new",(req,res)=>{
   res.render("listing/new.ejs");
 })
 
-app.post("/listing", async (req,res)=>{
+app.post("/listing", asyncWrap( async (req,res,next)=>{
   let newlist = new Listing(req.body.listing);
   await newlist.save();
   console.log(newlist);
   res.redirect("/allList");
-})
+}));
 
 app.get("/allList/:id/edit",async(req,res)=>{
   let {id} = req.params;
