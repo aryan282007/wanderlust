@@ -10,6 +10,7 @@ const ExpressError = require("./utils/ExpressError.js");
 
 const Listing = require("./modals/listing.js");
 // const { link } = require("fs");
+const { listingSchema } = require("./schema.js");
 
 app.set("views", path.join(__dirname, "view"));
 app.set("view engine", "ejs");
@@ -17,10 +18,16 @@ app.use(express.urlencoded({extended : true}));
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
-app.use((err,req,res,next)=>{
-  let {massage ,statusCode} = err;
-  res.status(statusCode).send(massage);
-})
+
+const validateListing = (req,res,next) =>{
+let {error} = listingSchema.validate(req.body);
+let errMsg = error.details.map(el => el.message).join(",");
+  if(error){
+    throw new ExpressError(errMsg,400);
+  }else{
+    next();
+  }
+}
 
 const mongoose_url = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -36,46 +43,60 @@ async function main() {
   await mongoose.connect(mongoose_url);
 }
 
-app.get("/allList", async (req,res)=>{
+app.get("/allList", asyncWrap(async (req,res)=>{
   const allListing = await Listing.find({});
   res.render("listing/index", { allListing });
-});
+}));
 
 app.get("/listing/new",(req,res)=>{
   res.render("listing/new.ejs");
 })
 
-app.post("/listing", asyncWrap( async (req,res,next)=>{
+app.post("/listing",validateListing, async (req,res,next)=>{
+  
   let newlist = new Listing(req.body.listing);
   await newlist.save();
   console.log(newlist);
   res.redirect("/allList");
-}));
+});
 
-app.get("/allList/:id/edit",async(req,res)=>{
+app.get("/allList/:id/edit",asyncWrap(async(req,res)=>{
   let {id} = req.params;
   const listing = await Listing.findById(id);
   res.render("listing/edit.ejs",{listing});
-})
+}));
 
-app.put("/allList/:id", async(req,res)=>{
+app.put("/allList/:id", validateListing, asyncWrap(async (req,res)=>{
+  if(!req.body.Listing){
+    throw new ExpressError("send vaild data for listing",400);
+  }
   let {id} = req.params;
   const listing = await Listing.findByIdAndUpdate(id,{...req.body.listing},{ new: true });
   res.redirect(`/listing/${id}`);
-})
+}));
 
-app.get("/listing/:id", async (req,res)=>{
+app.get("/listing/:id", asyncWrap(async (req,res)=>{
   let {id} = req.params;
   const listing = await Listing.findById(id);
   res.render("listing/show.ejs", {listing});
-})
+}));
 
-app.delete("/allList/:id",async(req,res)=>{
+app.delete("/allList/:id",asyncWrap(async(req,res)=>{
   let {id} = req.params;
    const listing = await Listing.findByIdAndDelete(id);
    console.log(listing);
    res.redirect("/allList");
-})
+}));
+
+app.use((req,res,next)=>{
+  next(new ExpressError("page not found",404));
+});
+
+app.use((err,req,res,next)=>{
+  let {message = "Something went wrong!" ,statusCode = 500} = err;
+  // res.status(statusCode).send(message);
+  res.render("listing/error.ejs",{err});
+});
 
 app.get("/",(req,res)=>{
   res.send("i'm root");
