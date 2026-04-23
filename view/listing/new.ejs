@@ -4,7 +4,7 @@
     <div class="col-8 offset-2">
  <h3>entre details</h3>
  <br>
- <form action="/listings" method="post" novalidate class="needs-validation" >
+ <form action="/listings" method="post" novalidate class="needs-validation" enctype="multipart/form-data">
   <div class="mb-3">
   <label for="title" class="form-label">title</label>
   <input type="text" name="listing[title]"  placeholder="entre the title" class="form-control" required>
@@ -15,10 +15,12 @@
   <textarea name="listing[description]" required  placeholder="entre the description" class="form-control " required></textarea>
   <div class="invalid-feedback">Please enter a description.</div>
   </div>
-  <div class="mb-3">
-   <label for="image"class="form-label" >image url</label>
-  <input type="text" name="listing[image][url]" placeholder=" image url" class="form-control">
+
+<div class="mb-3">
+   <label for="image"class="form-label" >upload image</label>
+  <input type="file" name="listing[image]" class="form-control">
   </div>
+
   <div class="row">
   <div class="mb-3 col-md-4">
     <label for="price"class="form-label">price</label>
