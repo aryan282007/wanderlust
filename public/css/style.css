@@ -88,7 +88,8 @@ body{
 
 /* show page */
 .show-img{
-  height: 30vh ;
+  height: 50vh ;
+  width: 55vw !important;
 }
 
 .btns{
@@ -97,4 +98,7 @@ body{
 .show-card{
   padding-left: 0px;
   padding-right: 0px;
+}
+#map{
+  height: 50vh;
 }

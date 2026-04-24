@@ -1,8 +1,7 @@
 <% layout("listing/layout/boilerplate") %>
-<body>
   <div class="row mt-3">
-    <div class="col-8 offset-2">
-<div class="listing-card col-6 offset-3 show-card">
+    <div class="col-8 offset-0">
+      <div class="listing-card col-6 offset-3 show-card">
    <h3><%= listing.title %></h3>
   <img src="<%= listing.image.url %>" class="card-img-top  show-img" alt="image">
   <div class="card-body">
@@ -10,25 +9,24 @@
     <p class="card-text">
      <%= listing.description %> </p>
     <p class="card-text">  &#8377; <%= listing.price.toLocaleString("en-IN") %> / night</p>
-     <p class="card-text"></p><%= listing.location %></p>
-     <p class="card-text"><%= listing.country %></p>
-    </p>
+    <p class="card-text"><%= listing.location %></p>
+    <p class="card-text"><%= listing.country %></p>
   </div>
 </div>
 </div>
   </div>
   <br>
   <% if(currentUser && currentUser._id.equals(listing.owner._id)) { %>
-<div class="btns">
-  <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark col-1 offset-4 add-btn">edit</a>
+<div class="btns col-8 offset-0 mb-3">
+  <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark col-1 offset-3 add-btn">edit</a>
   <br>
   <br>
   <form action="/listings/<%= listing._id %>?_method=delete" method="post" >
-    <button class="btn btn-dark offset-7 ">delete </button>
-    </div>
+    <button class="btn btn-dark offset-7 ">delete</button>
   </form>
+  </div>
    <% } %>
-  <div class="col-8 offset-4 mb-3">
+  <div class="col-8 offset-2 mb-3">
     <% if(currentUser){ %>
       <hr>
     <h1>leave a review</h1>
@@ -62,24 +60,64 @@
       <br>
     </form>
    <% } %>
+   <% if (listing.reviews.length > 0) { %>
     <hr>
     <p><b>All Review</b></p>
     <div class="row">
-      <% for(reviews of listing.reviews){ %>
+      <% for (const review of listing.reviews) { %>
        <div class="card col-5 ms-3 mb-3">
         <div class="card-title">
-          <h5>@<%= reviews.author.username %></h5>
+          <h5>@<%= review.author.username %></h5>
         </div>
-        <p class="starability-result card-text" data-rating="<%= reviews.rating %>"></p>
-      <div class="card-body">
-        <p><%= reviews.comment %></p>
+        <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
+        <div class="card-body">
+          <p><%= review.comment %></p>
+        </div>
+        <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=delete" method="post" class="mb-3">
+          <button class="btn btn-sm btn-dark">delete</button>
+        </form>
+      </div>
+      <% } %>
     </div>
-    <form action="/listings/<%= listing._id %>/reviews/<%= reviews._id %>?_method=delete" method="post" class="mb-3">
-      <button class="btn btn-sm btn-dark">delete</button>
-    </form>
-  </div>
-        <% } %>
-        </div>
+   <% } %>
+    </div>
+   <div class="col-8 offset-2">
+    <h1>Map</h1>
+    <br>
+    <div id="map" data-title="<%= listing.title %>" data-location="<%= listing.location %>" data-country="<%= listing.country %>"></div>
+    <br>
     </div>
     
-</body>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+  const mapDiv = document.getElementById('map');
+  const mapTitle = mapDiv.dataset.title;
+  const locationQuery = mapDiv.dataset.location + ", " + mapDiv.dataset.country;
+  const fallbackCoords = [23.2599, 77.4126];
+  const map = L.map('map').setView(fallbackCoords, 3);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationQuery)}&limit=1`)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data[0]) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        map.setView([lat, lon], 13);
+        L.marker([lat, lon]).addTo(map)
+          .bindPopup(`<strong>${mapTitle}</strong><br>${locationQuery}`)
+          .openPopup();
+      } else {
+        L.marker(fallbackCoords).addTo(map)
+          .bindPopup('Location not found; showing default map.').openPopup();
+      }
+    })
+    .catch(error => {
+      console.error('Geocoding failed:', error);
+      L.marker(fallbackCoords).addTo(map)
+        .bindPopup('Unable to load the listing location.').openPopup();
+    });
+ </script>

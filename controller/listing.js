@@ -29,7 +29,9 @@ module.exports.editListing = async (req,res)=>{
      req.flash("error","Listing not found!");
      return res.redirect("/listings");
   }
-  res.render("listing/edit.ejs",{listing});
+  let orginalUrl = listing.image.url;
+  let orginalReplace = orginalUrl.replace("/upload","/upload/w_250"); 
+  res.render("listing/edit.ejs",{listing, orginalReplace});
 };
 
 module.exports.updateListing = async (req,res)=>{
@@ -38,6 +40,12 @@ module.exports.updateListing = async (req,res)=>{
   }
   let {id} = req.params;
   const listing = await Listing.findByIdAndUpdate(id,{...req.body.listing},{ new: true });
+  if(typeof req.file !== "undefined"){
+  let url = req.file.path;
+  let filename = req.file.filename;
+  listing.image = {url, filename};
+  await listing.save();
+  }
   req.flash("success","Listing Updated!");
   res.redirect(`/listings/${id}`);
 };
@@ -52,17 +60,14 @@ module.exports.showListing = async (req,res)=>{
   res.render("listing/show.ejs", {listing});
 };
 
-// module.exports.destroyListing = async (req,res)=>{
-//   let {id} = req.params;
-//   await Listing.findByIdAndDelete(id);
-//   req.flash("success","Listing deleted!");
-//   res.redirect("/listings");
-// };
-
 module.exports.destroyListing = async(req,res)=>{
   let {id} = req.params;
    const listing = await Listing.findByIdAndDelete(id);
    console.log(listing);
    req.flash("success","Listing deleted!");
    res.redirect("/listings");
+};
+
+module.exports.categoryListing = async (req,res)=>{
+  res.render("listing/category.ejs");
 };

@@ -1,6 +1,72 @@
 <% layout("listing/layout/boilerplate") %> 
+<style>
+#filter{
+  display: flex;
+  flex-wrap: wrap;
+}
+.filter{
+  text-align: center;
+  margin-right: 2rem;
+  margin-left: 10px;
+  opacity: 0.7;
+}
+.filter:hover{
+  opacity: 1;
+  cursor: pointer;
+}
+.filter p{
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+</style>
 <body>
-  <h3>all list</h3>
+  <div id="filter" class="mt-2">
+    <div class="filter">
+      <i class="fa-solid fa-fire"></i>
+      <p>Trending</p>
+    </div>
+
+    <div class="filter ">
+      <i class="fa-solid fa-bed"></i>
+      <p>Rooms</p>
+    </div>
+
+    <div class="filter ">
+      <i class="fa-solid fa-city"></i>
+      <p>city</p>
+    </div>
+
+    <div class="filter ">
+      <i class="fa-solid fa-mountain"></i>
+      <p>mountain</p>
+    </div>
+
+    <div class="filter ">
+      <i class="fa-solid fa-building"></i>
+      <p>Castles</p>
+    </div>
+
+     <div class="filter ">
+      <i class="fa-solid fa-person-swimming"></i>
+      <p>Beach</p>
+    </div>
+
+     <div class="filter ">
+      <i class="fa-solid fa-campground"></i>
+      <p>Camping</p>
+    </div>
+
+    <div class="filter ">
+     <i class="fa-solid fa-seedling"></i>
+      <p>Farmes</p>
+    </div>
+
+     <div class="filter ">
+      <i class="fa-solid fa-mountain-city"></i>
+      <p>town</p>
+    </div>
+  </div>
+  <!-- <h3>ALL LISTINGS</h3> -->
   <!-- <form action="/listing/new" method="get">
     <button>Create new post!</button>
   </form>
