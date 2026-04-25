@@ -14,6 +14,7 @@ const listing_route = require("./routes/listing.js");
 const review_route = require("./routes/review.js");
 const user_route = require("./routes/user.js");
 const session = require("express-session");
+const MongoStore = require("connect-mongo").default;
 const flash = require('connect-flash');
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -26,8 +27,21 @@ app.use(express.urlencoded({extended : true}));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
+const store = MongoStore.create({
+  mongoUrl: process.env.ATLAS_URI,
+  crypto: {
+    secret: process.env.SESSION_SECRET,
+  },
+  touchAfter: 24 * 3600,
+});
+
+store.on("error", (e)=>{
+  console.log("session store error",e);
+});
+
 const sessionOption = {
-  secret : "mysupersercreatcode",
+  store,
+  secret : process.env.SESSION_SECRET,
   resave : false,
   saveUninitialized : true,
   cookie : {
@@ -70,7 +84,7 @@ app.get('/', (req, res) => {
   res.redirect('/listings');
 });
 
-const mongoose_url = "mongodb://127.0.0.1:27017/wanderlust";
+const mongoose_url = process.env.ATLAS_URI ;
 
 main()
 .then(()=>{
@@ -94,9 +108,6 @@ app.use((err,req,res,next)=>{
   res.render("listing/error.ejs",{err});
 });
 
-// app.get("/",(req,res)=>{
-//   res.send("i'm root");
-// });
 
 app.listen(port,()=>{
   console.log(`server is hearing on ${port}`);

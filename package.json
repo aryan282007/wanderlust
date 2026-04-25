@@ -1,4 +1,7 @@
 {
+  "engine":{
+    "node": "22.20.0"
+  },
   "name": "airbnb-project",
   "version": "1.0.0",
   "description": "its clone type project of airbnb app",
@@ -11,6 +14,7 @@
   "dependencies": {
     "cloudinary": "^1.41.3",
     "connect-flash": "^0.1.1",
+    "connect-mongo": "^6.0.0",
     "dotenv": "^17.4.2",
     "ejs": "^5.0.1",
     "ejs-mate": "^4.0.0",
