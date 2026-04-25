@@ -6,6 +6,10 @@ A full-stack Airbnb-style clone built with Node.js, Express, MongoDB, Passport a
 
 Wanderlust is a rental listing application that allows users to create, view, edit, and delete property listings. It also supports user registration, login, review posting, and owner-based access control, making it a small-scale marketplace for booking rooms or homes.
 
+## Live Demo
+
+ **Visit the live application**: [https://wanderlust-ay.onrender.com](https://wanderlust-ay.onrender.com)
+
 ## Prerequisites
 
 - **Node.js**: v22.20.0 or higher
