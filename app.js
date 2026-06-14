@@ -79,6 +79,13 @@ app.use("/listings", listing_route);
 app.use("/listings/:id/reviews", review_route);
 app.use("/", user_route);
 
+app.get('/terms', (req, res) => {
+  res.render('terms');
+});
+
+app.get('/privacy', (req, res) => {
+  res.render('privacy');
+});
 
 app.get('/', (req, res) => {
   res.redirect('/listings');
@@ -90,12 +97,19 @@ main()
 .then(()=>{
   console.log("mongoose is connected");
 })
-.catch(()=>{
-  console.log("error in mongoose connection");
+.catch((e)=>{
+  console.error("error in mongoose connection:", e);
+  process.exit(1);
 });
 
 async function main() {
-  await mongoose.connect(mongoose_url);
+  if(!mongoose_url){
+    throw new Error('ATLAS_URI is not set in environment variables');
+  }
+  // Use a reasonable server selection timeout and surface detailed errors
+  await mongoose.connect(mongoose_url, {
+    serverSelectionTimeoutMS: 10000,
+  });
 }
 
 app.use((req,res,next)=>{

@@ -10,16 +10,16 @@ const upload = multer({ storage: storage });
 
 router.route("/")
 .get(asyncWrap(ListingController.index))
-.post(isLoggedIn, validateListing, upload.single("listing[image]"), asyncWrap(ListingController.createListing));
+.post(isLoggedIn, upload.single("listing[image]"), validateListing, asyncWrap(ListingController.createListing));
 
 router.get("/new",isLoggedIn ,ListingController.newListing);
 
 router.route("/:id")
 .get(asyncWrap(ListingController.showListing))
 .put(isLoggedIn,isOwner,upload.single("listing[image]"), validateListing, asyncWrap(ListingController.updateListing))
-.delete(isOwner,isLoggedIn,asyncWrap(ListingController.destroyListing));
+.delete(isLoggedIn,isOwner,asyncWrap(ListingController.destroyListing));
 
-router.get("/:id/edit",isOwner,isLoggedIn,asyncWrap(ListingController.editListing));
+router.get("/:id/edit",isLoggedIn,isOwner,asyncWrap(ListingController.editListing));
 
 
 module.exports = router;

@@ -2,9 +2,28 @@ const Listing = require("../modals/listing.js");
 const ExpressError = require("../utils/ExpressError.js");
 
 module.exports.index =  async (req,res)=>{
-  const allListing = await Listing.find({});
-  res.render("listing/index", { allListing });
+  const { search } = req.query;
+  let allListing;
+  if (search && search.trim()) {
+    const regex = new RegExp(escapeRegex(search.trim()), 'i');
+    allListing = await Listing.find({
+      $or: [
+        { title: regex },
+        { location: regex },
+        { country: regex },
+        { description: regex }
+      ]
+    });
+  } else {
+    allListing = await Listing.find({});
+  }
+  res.render("listing/index", { allListing, search });
 };
+
+function escapeRegex(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
 
 module.exports.newListing = (req,res)=>{
   res.render("listing/new.ejs");

@@ -1,9 +1,9 @@
 <% layout("listing/layout/boilerplate") %>
-  <div class="row mt-3">
-    <div class="col-8 offset-0">
-      <div class="listing-card col-6 offset-3 show-card">
-   <h3><%= listing.title %></h3>
-  <img src="<%= listing.image.url %>" class="card-img-top  show-img" alt="image">
+  <div class="row justify-content-center mt-3">
+    <div class="col-12 col-md-8 mx-auto">
+      <div class="listing-card show-card mx-auto">
+   <h3 class="text-center"><%= listing.title %></h3>
+  <img src="<%= listing.image.url %>" class="card-img-top img-fluid show-img" alt="image">
   <div class="card-body">
     <p class="card-text"><i>Owned by <%= listing.owner.username %></i></p>
     <p class="card-text">
@@ -17,16 +17,17 @@
   </div>
   <br>
   <% if(currentUser && currentUser._id.equals(listing.owner._id)) { %>
-<div class="btns col-8 offset-0 mb-3">
-  <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark col-1 offset-3 add-btn">edit</a>
-  <br>
-  <br>
-  <form action="/listings/<%= listing._id %>?_method=delete" method="post" >
-    <button class="btn btn-dark offset-7 ">delete</button>
-  </form>
+  <div class="row justify-content-center mb-3">
+    <div class="btns col-12 col-md-8 d-flex justify-content-center gap-2">
+      <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark add-btn">edit</a>
+      <form action="/listings/<%= listing._id %>?_method=delete" method="post" >
+        <button class="btn btn-dark">delete</button>
+      </form>
+    </div>
   </div>
    <% } %>
-  <div class="col-8 offset-2 mb-3">
+    <div class="row justify-content-center mb-3">
+      <div class="col-12 col-md-8">
     <% if(currentUser){ %>
       <hr>
     <h1>leave a review</h1>
@@ -62,10 +63,10 @@
    <% } %>
    <% if (listing.reviews.length > 0) { %>
     <hr>
-    <p><b>All Review</b></p>
-    <div class="row">
+    <p class="text-center"><b>All Review</b></p>
+    <div class="row justify-content-center">
       <% for (const review of listing.reviews) { %>
-       <div class="card col-5 ms-3 mb-3">
+       <div class="card col-12 col-md-5 mb-3">
         <div class="card-title">
           <h5>@<%= review.author.username %></h5>
         </div>
@@ -79,14 +80,16 @@
       </div>
       <% } %>
     </div>
-   <% } %>
+     <% } %>
     </div>
-   <div class="col-8 offset-2">
-    <h1>Map</h1>
-    <br>
-    <div id="map" data-title="<%= listing.title %>" data-location="<%= listing.location %>" data-country="<%= listing.country %>"></div>
-    <br>
-    </div>
+     <div class="row justify-content-center">
+      <div class="col-12 col-md-8">
+        <h1 class="text-center">Map</h1>
+        <br>
+        <div id="map" data-title="<%= listing.title %>" data-location="<%= listing.location %>" data-country="<%= listing.country %>"></div>
+        <br>
+      </div>
+     </div>
     
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>

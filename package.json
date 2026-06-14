@@ -1,5 +1,5 @@
 {
-  "engine":{
+  "engines":{
     "node": "22.20.0"
   },
   "name": "airbnb-project",
@@ -7,6 +7,8 @@
   "description": "its clone type project of airbnb app",
   "main": "index.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Aryan yadav",
